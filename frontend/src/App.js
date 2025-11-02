@@ -21,13 +21,13 @@ function App() {
       <Navbar unit={unit} setUnit={setUnit} />
       <div className="App">
         <Routes>
-          {/* ✅ Dashboard as main route */}
+         
           <Route path="/" element={<Dashboard />} />
 
-          {/* ✅ DetailedWeather Page */}
+        
           <Route path="/details/:city" element={<DetailedWeather unit={unit} />} />
 
-          {/* ✅ Favorites Page */}
+        
           <Route path="/favorites" element={<Favorites unit={unit} />} />
         </Routes>
       </div>
