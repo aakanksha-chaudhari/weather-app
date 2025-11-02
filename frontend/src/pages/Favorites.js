@@ -3,8 +3,7 @@ import axios from "axios";
 import "./Favorites.css";
 import { AuthContext } from "../context/AuthContext";
 
-// 🌍 Backend Base URL (change after deployment)
-const API_BASE_URL = "https://your-weather-api.onrender.com";
+const API_BASE_URL = "https://weather-app-x9dy.onrender.com";
 
 function Favorites({ unit }) {
   const { user } = useContext(AuthContext);
@@ -15,30 +14,24 @@ function Favorites({ unit }) {
   );
   const [weatherData, setWeatherData] = useState({});
 
-  // ✅ Fetch weather for all favorite cities
   const fetchWeather = async (city) => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/api/weather/${city}?unit=${unit}`
-      );
+      const res = await axios.get(`${API_BASE_URL}/api/weather/${city}?unit=${unit}`);
       setWeatherData((prev) => ({ ...prev, [city]: res.data }));
     } catch (err) {
-      console.log("Weather fetch error:", err);
+      console.error("Weather fetch error:", err);
     }
   };
 
-  // ✅ Load data whenever favorites or unit change
   useEffect(() => {
     if (favorites.length > 0) favorites.forEach(fetchWeather);
   }, [favorites, unit]);
 
-  // ✅ Sync favorites when user logs in/out
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
     setFavorites(stored);
   }, [user]);
 
-  // ✅ Sync with localStorage in case another component changes it
   useEffect(() => {
     const syncFavorites = () => {
       const updated = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
@@ -48,7 +41,6 @@ function Favorites({ unit }) {
     return () => window.removeEventListener("storage", syncFavorites);
   }, [userFavoritesKey]);
 
-  // ✅ Save favorites when updated
   useEffect(() => {
     localStorage.setItem(userFavoritesKey, JSON.stringify(favorites));
   }, [favorites, userFavoritesKey]);

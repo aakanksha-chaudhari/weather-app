@@ -1,4 +1,3 @@
-// src/pages/CityDetails.js
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -12,6 +11,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+const API_BASE_URL = "https://weather-app-x9dy.onrender.com";
+
 function CityDetails() {
   const { cityName } = useParams();
   const navigate = useNavigate();
@@ -20,16 +21,11 @@ function CityDetails() {
 
   const fetchDetails = async () => {
     try {
-      // Current weather
-      const res1 = await axios.get(
-        `https://weather-app-x9dy.onrender.com/api/weather/${cityName}`
-      );
+      const res1 = await axios.get(`${API_BASE_URL}/api/weather/${cityName}`);
       setCurrent(res1.data);
 
-      // Forecast data (5-day / 3-hour interval)
       const res2 = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=acfd6bb1d0f0550289d683f1507036da
-&units=metric`
+        `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=acfd6bb1d0f0550289d683f1507036da&units=metric`
       );
 
       const chartData = res2.data.list.map((item) => ({

@@ -11,25 +11,25 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+const API_BASE_URL = "https://weather-app-x9dy.onrender.com";
+
 function DetailedWeather() {
   const { city } = useParams();
   const [data, setData] = useState(null);
   const [forecast, setForecast] = useState([]);
 
-  // ✅ Fetch detailed data
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/weather/${city}`);
+        const res = await axios.get(`${API_BASE_URL}/api/weather/${city}`);
         setData(res.data);
 
         const forecastRes = await axios.get(
-          `http://localhost:5000/api/forecast/${city}`
+          `${API_BASE_URL}/api/forecast/${city}`
         );
 
-        // Extract useful info for chart
         const hourlyData = forecastRes.data.list.slice(0, 40).map((entry) => ({
-          time: entry.dt_txt.split(" ")[1].slice(0, 5), // "03:00"
+          time: entry.dt_txt.split(" ")[1].slice(0, 5),
           temp: entry.main.temp,
         }));
 

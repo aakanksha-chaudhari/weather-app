@@ -8,13 +8,11 @@ import Favorites from "./pages/Favorites";
 import { AuthContext } from "./context/AuthContext";
 
 const DEFAULT_CITIES = ["Mumbai", "Delhi", "London", "New York"];
-
-// 🌍 Backend Base URL (change after deployment)
-const API_BASE_URL = "https://your-weather-api.onrender.com";
+// 🌍 Correct Backend URL
+const API_BASE_URL = "https://weather-app-x9dy.onrender.com";
 
 function App() {
   const { user } = useContext(AuthContext);
-
   const userFavoritesKey = user ? `favorites_${user.uid}` : "favorites_guest";
 
   const [cities, setCities] = useState(DEFAULT_CITIES);
@@ -25,27 +23,22 @@ function App() {
   );
   const [unit, setUnit] = useState("metric"); // metric=°C, imperial=°F
 
-  // ✅ Load unit preference from localStorage on first load
   useEffect(() => {
     const savedUnit = localStorage.getItem("unit");
     if (savedUnit) setUnit(savedUnit);
   }, []);
 
-  // ✅ Load favorites again if user changes (login/logout)
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
     setFavorites(storedFavorites);
   }, [user]);
 
-  // ✅ Fetch weather for each city
   const fetchWeather = async (city) => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/api/weather/${city}?unit=${unit}`
-      );
+      const res = await axios.get(`${API_BASE_URL}/api/weather/${city}?unit=${unit}`);
       setWeatherData((prev) => ({ ...prev, [city]: res.data }));
     } catch (err) {
-      console.log("Weather fetch error:", err);
+      console.error("Weather fetch error:", err);
     }
   };
 
@@ -64,7 +57,6 @@ function App() {
     }
   };
 
-  // ✅ Updated favorite handling (per user)
   const handleFavorite = (city) => {
     let updated;
     if (favorites.includes(city)) {
