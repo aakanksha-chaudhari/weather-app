@@ -13,7 +13,9 @@ function Dashboard() {
 
   const fetchWeather = async (city) => {
     try {
-      const res = await axios.get(`https://weather-app-x9dy.onrender.com/api/weather/${city}`);
+      const res = await axios.get(
+        `https://weather-app-x9dy.onrender.com/api/weather/${city}`
+      );
       setWeatherData((prev) => ({ ...prev, [city]: res.data }));
     } catch (err) {
       console.log(err);
@@ -53,7 +55,8 @@ function Dashboard() {
             <div
               key={city}
               className="card"
-              onClick={() => navigate(`/city/${city}`)}
+              onClick={() => navigate(`/details/${city}`)} // ✅ Navigate to DetailedWeather
+              style={{ cursor: "pointer" }}
             >
               <h2>{city}</h2>
               {data ? (

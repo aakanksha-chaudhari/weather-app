@@ -1,13 +1,16 @@
+// src/pages/Favorites.js
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import "./Favorites.css";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "https://weather-app-x9dy.onrender.com";
 
 function Favorites({ unit }) {
   const { user } = useContext(AuthContext);
   const userFavoritesKey = user ? `favorites_${user.uid}` : "favorites_guest";
+  const navigate = useNavigate();
 
   const [favorites, setFavorites] = useState(
     JSON.parse(localStorage.getItem(userFavoritesKey)) || []
@@ -66,7 +69,12 @@ function Favorites({ unit }) {
         {favorites.map((city) => {
           const data = weatherData[city];
           return (
-            <div key={city} className="favorite-card">
+            <div
+              key={city}
+              className="favorite-card"
+              onClick={() => navigate(`/details/${city}`)} // ✅ Navigate to DetailedWeather
+              style={{ cursor: "pointer" }}
+            >
               <h2>{city}</h2>
               {data ? (
                 <>
@@ -84,7 +92,10 @@ function Favorites({ unit }) {
               )}
               <button
                 className="remove-btn"
-                onClick={() => handleRemoveFavorite(city)}
+                onClick={(e) => {
+                  e.stopPropagation(); // ✅ Prevent navigation on remove
+                  handleRemoveFavorite(city);
+                }}
               >
                 ❌ Remove
               </button>
