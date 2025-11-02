@@ -3,6 +3,9 @@ import axios from "axios";
 import "./Favorites.css";
 import { AuthContext } from "../context/AuthContext";
 
+// 🌍 Backend Base URL (change after deployment)
+const API_BASE_URL = "https://your-weather-api.onrender.com";
+
 function Favorites({ unit }) {
   const { user } = useContext(AuthContext);
   const userFavoritesKey = user ? `favorites_${user.uid}` : "favorites_guest";
@@ -16,7 +19,7 @@ function Favorites({ unit }) {
   const fetchWeather = async (city) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/weather/${city}?unit=${unit}`
+        `${API_BASE_URL}/api/weather/${city}?unit=${unit}`
       );
       setWeatherData((prev) => ({ ...prev, [city]: res.data }));
     } catch (err) {

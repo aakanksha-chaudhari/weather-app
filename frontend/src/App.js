@@ -9,6 +9,9 @@ import { AuthContext } from "./context/AuthContext";
 
 const DEFAULT_CITIES = ["Mumbai", "Delhi", "London", "New York"];
 
+// 🌍 Backend Base URL (change after deployment)
+const API_BASE_URL = "https://your-weather-api.onrender.com";
+
 function App() {
   const { user } = useContext(AuthContext);
 
@@ -20,7 +23,6 @@ function App() {
   const [favorites, setFavorites] = useState(
     JSON.parse(localStorage.getItem(userFavoritesKey)) || []
   );
-
   const [unit, setUnit] = useState("metric"); // metric=°C, imperial=°F
 
   // ✅ Load unit preference from localStorage on first load
@@ -39,11 +41,11 @@ function App() {
   const fetchWeather = async (city) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/weather/${city}?unit=${unit}`
+        `${API_BASE_URL}/api/weather/${city}?unit=${unit}`
       );
       setWeatherData((prev) => ({ ...prev, [city]: res.data }));
     } catch (err) {
-      console.log(err);
+      console.log("Weather fetch error:", err);
     }
   };
 
