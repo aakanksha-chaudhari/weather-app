@@ -17,7 +17,7 @@ app.use(
 
 // ✅ Environment variables
 const PORT = process.env.PORT || 5000;
-const API_KEY = process.env.OPENWEATHER_API_KEY;
+const API_KEY = process.env.WEATHER_API_KEY;
 
 // 🧠 Simple in-memory cache (for faster repeated requests)
 const cache = {};
@@ -87,6 +87,9 @@ app.get("/api/forecast/:city", async (req, res) => {
 app.get("/", (req, res) => {
   res.send("🌦️ Weather API Server is running... ✅");
 });
+
+// ✅ Log key presence for debugging (optional)
+console.log("Loaded API Key:", API_KEY ? "✅ Found" : "❌ Missing");
 
 // ✅ Start server
 app.listen(PORT, () => {
