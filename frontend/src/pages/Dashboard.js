@@ -13,13 +13,14 @@ function Dashboard() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
-  // ✅ Manage favorites locally per user
+  // ✅ User-specific favorites (saved locally)
   const { user } = useContext(AuthContext);
   const userFavoritesKey = user ? `favorites_${user.uid}` : "favorites_guest";
   const [favorites, setFavorites] = useState(
     JSON.parse(localStorage.getItem(userFavoritesKey)) || []
   );
 
+  // ✅ Fetch weather for a city
   const fetchWeather = async (city) => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/weather/${city}`);
@@ -29,12 +30,14 @@ function Dashboard() {
     }
   };
 
+  // ✅ Auto-refresh weather data every 1 minute
   useEffect(() => {
     cities.forEach(fetchWeather);
     const interval = setInterval(() => cities.forEach(fetchWeather), 60000);
     return () => clearInterval(interval);
   }, [cities]);
 
+  // ✅ Add new city
   const handleAddCity = () => {
     if (search && !cities.includes(search)) {
       setCities([...cities, search]);
@@ -42,7 +45,7 @@ function Dashboard() {
     }
   };
 
-  // ✅ Handle favorite toggle
+  // ✅ Add/remove from favorites
   const handleFavorite = (city) => {
     let updated;
     if (favorites.includes(city)) {
@@ -57,6 +60,7 @@ function Dashboard() {
   return (
     <div className="App">
       <h1>🌤 Weather Dashboard</h1>
+
       <div className="search">
         <input
           type="text"
@@ -75,7 +79,7 @@ function Dashboard() {
               key={city}
               className="card"
               style={{ cursor: "pointer" }}
-              onClick={() => navigate(`/details/${city}`)} // ✅ Navigate on click
+              onClick={() => navigate(`/details/${city}`)} // ✅ Click card → navigate
             >
               <h2>{city}</h2>
               {data ? (
@@ -83,17 +87,20 @@ function Dashboard() {
                   <p>{data.weather[0].description}</p>
                   <h3>{data.main.temp}°C</h3>
                   <p>💧 {data.main.humidity}% | 🌬 {data.wind.speed} m/s</p>
+
+                  {/* ✅ Favorite Button (doesn't trigger navigation) */}
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // ⛔ prevent click navigating when pressing button
+                      e.stopPropagation(); // prevent navigation when button clicked
                       handleFavorite(city);
                     }}
                   >
-                    {favorites.includes(city)
-                      ? "★ Favorite"
-                      : "☆ Add Favorite"}
+                    {favorites.includes(city) ? "★ Favorite" : "☆ Add Favorite"}
                   </button>
-                  <p>Click for details →</p>
+
+                  <p style={{ fontSize: "0.9rem", color: "#555" }}>
+                    Click for details →
+                  </p>
                 </>
               ) : (
                 <p>Loading...</p>
