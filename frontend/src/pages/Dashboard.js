@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+// src/pages/Dashboard.js
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const DEFAULT_CITIES = ["Mumbai", "Delhi", "London", "New York"];
 const API_BASE_URL = "https://weather-app-x9dy.onrender.com";
@@ -11,12 +13,19 @@ function Dashboard() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
+  // ✅ Manage favorites locally per user
+  const { user } = useContext(AuthContext);
+  const userFavoritesKey = user ? `favorites_${user.uid}` : "favorites_guest";
+  const [favorites, setFavorites] = useState(
+    JSON.parse(localStorage.getItem(userFavoritesKey)) || []
+  );
+
   const fetchWeather = async (city) => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/weather/${city}`);
       setWeatherData((prev) => ({ ...prev, [city]: res.data }));
     } catch (err) {
-      console.error("Weather fetch error:", err);
+      console.log(err);
     }
   };
 
@@ -31,6 +40,18 @@ function Dashboard() {
       setCities([...cities, search]);
       setSearch("");
     }
+  };
+
+  // ✅ Handle favorite toggle
+  const handleFavorite = (city) => {
+    let updated;
+    if (favorites.includes(city)) {
+      updated = favorites.filter((c) => c !== city);
+    } else {
+      updated = [...favorites, city];
+    }
+    setFavorites(updated);
+    localStorage.setItem(userFavoritesKey, JSON.stringify(updated));
   };
 
   return (
@@ -53,8 +74,8 @@ function Dashboard() {
             <div
               key={city}
               className="card"
-              onClick={() => navigate(`/details/${city}`)} // ✅ Navigate to DetailedWeather
               style={{ cursor: "pointer" }}
+              onClick={() => navigate(`/details/${city}`)} // ✅ Navigate on click
             >
               <h2>{city}</h2>
               {data ? (
@@ -62,6 +83,16 @@ function Dashboard() {
                   <p>{data.weather[0].description}</p>
                   <h3>{data.main.temp}°C</h3>
                   <p>💧 {data.main.humidity}% | 🌬 {data.wind.speed} m/s</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // ⛔ prevent click navigating when pressing button
+                      handleFavorite(city);
+                    }}
+                  >
+                    {favorites.includes(city)
+                      ? "★ Favorite"
+                      : "☆ Add Favorite"}
+                  </button>
                   <p>Click for details →</p>
                 </>
               ) : (
