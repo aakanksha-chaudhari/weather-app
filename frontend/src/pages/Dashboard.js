@@ -13,7 +13,7 @@ function Dashboard() {
 
   const fetchWeather = async (city) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/weather/${city}`);
+      const res = await axios.get(`https://weather-app-x9dy.onrender.com/api/weather/${city}`);
       setWeatherData((prev) => ({ ...prev, [city]: res.data }));
     } catch (err) {
       console.log(err);

@@ -22,7 +22,7 @@ function CityDetails() {
     try {
       // Current weather
       const res1 = await axios.get(
-        `http://localhost:5000/api/weather/${cityName}`
+        `https://weather-app-x9dy.onrender.com/api/weather/${cityName}`
       );
       setCurrent(res1.data);
 
