@@ -1,9 +1,9 @@
-// src/pages/Dashboard.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const DEFAULT_CITIES = ["Mumbai", "Delhi", "London", "New York"];
+const API_BASE_URL = "https://weather-app-x9dy.onrender.com";
 
 function Dashboard() {
   const [cities, setCities] = useState(DEFAULT_CITIES);
@@ -13,12 +13,10 @@ function Dashboard() {
 
   const fetchWeather = async (city) => {
     try {
-      const res = await axios.get(
-        `https://weather-app-x9dy.onrender.com/api/weather/${city}`
-      );
+      const res = await axios.get(`${API_BASE_URL}/api/weather/${city}`);
       setWeatherData((prev) => ({ ...prev, [city]: res.data }));
     } catch (err) {
-      console.log(err);
+      console.error("Weather fetch error:", err);
     }
   };
 
